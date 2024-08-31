@@ -1,8 +1,11 @@
 import 'package:e_commerce_new/screens/bottom_nav.dart';
 import 'package:e_commerce_new/screens/styles/textstyle.dart';
+import 'package:e_commerce_new/services/database.dart';
+import 'package:e_commerce_new/services/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -30,7 +33,17 @@ class _SignupPageState extends State<SignupPage> {
               "Registered Succesfully",
               style: WritingStyle.SubTextBold(),
             )));
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNav()));
+        String Id = randomAlphaNumeric(10);
+        await SharedPreferenceHelper().Saveuserid(Id);
+        await SharedPreferenceHelper().Savenameid(namecontroller.text);
+        await SharedPreferenceHelper().Saveemailid(emailcontroller.text);
+        Map<String,dynamic> userInfoMap={
+          "Name":namecontroller.text,
+          "Email":emailcontroller.text,
+          "Id":Id,
+        };
+        await DatabaseMethords().addUserDetails(userInfoMap,Id);
+        Navigator.pushNamed(context, 'bottomnav');
       } on FirebaseException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -171,7 +184,7 @@ class _SignupPageState extends State<SignupPage> {
                                 borderRadius: BorderRadius.circular(10)),
                             child: TextButton(
                               onPressed: () {
-                                if(_formkey.currentState!.validate()){
+                                if (_formkey.currentState!.validate()) {
                                   setState(() {
                                     name = namecontroller.text;
                                     email = emailcontroller.text;
@@ -199,10 +212,14 @@ class _SignupPageState extends State<SignupPage> {
                           "Already have an account?      ",
                           style: WritingStyle.ordinary(),
                         ),
-                        Text(
-                          "Sign In",
-                          style: WritingStyle.LinkTextGreen(),
-                        ),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, 'signin');
+                            },
+                            child: Text(
+                              "Sign in",
+                              style: WritingStyle.LinkTextGreen(),
+                            )),
                       ],
                     )
                   ],

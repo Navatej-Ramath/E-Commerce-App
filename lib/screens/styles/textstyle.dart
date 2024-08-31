@@ -45,4 +45,8 @@ class WritingStyle {
     return const TextStyle(
         fontSize: 22, color: Color(0xFFFd6f3e), fontWeight: FontWeight.bold);
   }
+  static TextStyle SubTextLarge() {
+    return const TextStyle(
+        fontSize: 23, color: Colors.grey, fontWeight: FontWeight.bold);
+  }
 }
